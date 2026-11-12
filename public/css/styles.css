@@ -106,19 +106,19 @@ h2 { margin: 0; font: 700 var(--fs-xl)/1.1 var(--font-display); letter-spacing: 
 .tag { flex: none; border-color: transparent; background: var(--gold); color: var(--on-gold); font: 700 var(--fs-xs)/1 var(--font-display); letter-spacing: .08em; text-transform: uppercase; min-height: 22px; padding: 0 8px; }
 
 /* Botones */
-.primary, .fab {
+.primary {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: var(--control); padding: 0 18px;
   border: 0; border-radius: var(--r-md); background: var(--accent); color: #fff; text-decoration: none;
   font: 700 var(--fs-lg)/1 var(--font-display); letter-spacing: .04em; text-transform: uppercase;
   transition: background-color .15s, transform .1s, opacity .2s;
 }
-.primary:active:not(:disabled), .fab:active { background: var(--accent-press); transform: scale(.99); }
+.primary:active:not(:disabled) { background: var(--accent-press); transform: scale(.99); }
 .primary:disabled { opacity: .5; cursor: default; }
 .primary.busy span::after { content: '…'; }
 .step, .tool { display: grid; place-items: center; border-radius: var(--r-md); color: var(--ink); }
 .step { min-height: var(--control); border: 1px solid var(--line); background: var(--bg); }
 .step:disabled { opacity: .35; cursor: default; }
-.step svg, .primary svg, .fab svg { width: 18px; height: 18px; stroke-width: 2.4; }
+.step svg, .primary svg { width: 18px; height: 18px; stroke-width: 2.4; }
 .tool { min-width: 44px; min-height: 36px; border: 0; background: none; color: var(--muted); }
 .tool:hover { color: var(--ink); background: var(--surface-2); }
 .tool svg { width: 18px; height: 18px; }
@@ -359,9 +359,6 @@ input[type="date"]:disabled { opacity: .6; }
 .foot { margin-top: calc(var(--gap) - var(--gap-section)); text-align: center; }
 
 /* ---------- Pie y botón flotante ---------- */
-.fab { position: fixed; right: max(16px, calc(50% - 240px)); bottom: calc(var(--tabbar) + 12px + env(safe-area-inset-bottom)); z-index: 5; min-height: 48px; padding: 0 18px 0 14px;
-  border-radius: var(--r-pill); font-size: var(--fs-md); box-shadow: 0 8px 24px rgb(0 0 0 / .6); }
-.fab.away { opacity: 0; transform: translateY(12px); pointer-events: none; }
 
 /* ---------- Movimiento ---------- */
 @media (prefers-reduced-motion: no-preference) {

@@ -7,10 +7,12 @@ const dateText = (d) => (d ? new Date(d + 'T12:00:00').toLocaleDateString('es-ES
 
 const VERB = { guardar: 'guardó', editar: 'editó', borrar: 'borró', restaurar: 'restauró una copia' };
 
-/** Título de una entrada: "Jugador6 editó la J12" */
+/** Título de una entrada: "Jugador6 editó la J12". Lo que carga el servidor (importaciones, copias) no lleva persona. */
 export function entryTitle(e) {
-  const who = e.who || 'Alguien';
-  if (e.action === 'restaurar') return `${who} restauró una copia de seguridad`;
+  const fromServer = e.auth === 'script';
+  const who = !fromServer && e.who ? e.who : 'Alguien';
+  if (e.action === 'restaurar') return fromServer ? 'Copia de seguridad restaurada' : `${who} restauró una copia de seguridad`;
+  if (fromServer && e.action === 'guardar') return `J${e.n} importada`;
   if (e.action === 'editar' && e.auth === 'propia') return `${who} corrigió la J${e.n}`;
   return `${who} ${VERB[e.action] || e.action} la J${e.n}`;
 }

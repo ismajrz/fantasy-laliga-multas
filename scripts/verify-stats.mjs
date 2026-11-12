@@ -40,3 +40,7 @@ const rr = records(real);
 assert.ok(rr.fined && rr.clean, 'récords con los datos reales');
 assert.equal(potSeries(real).at(-1).cents, 5400, 'bote real 54,00 €');
 console.log(`verify-stats: OK · reales: racha de ${rr.slot?.slot} ${rr.slot?.len} (${rr.slot?.names}), pagando ${rr.fined.len} (${rr.fined.names}), sin multa ${rr.clean.len} (${rr.clean.names}), peor tramo ${JSON.stringify(worstStretch(real))}`);
+// Lo que carga el servidor no se atribuye a ninguna persona
+assert.equal(entryTitle({ who: 'Jugador9', action: 'guardar', auth: 'script', n: 1 }), 'J1 importada');
+assert.equal(entryTitle({ who: 'Jugador9', action: 'restaurar', auth: 'script' }), 'Copia de seguridad restaurada');
+console.log('verify-stats: historial sin autor para cargas del servidor OK');

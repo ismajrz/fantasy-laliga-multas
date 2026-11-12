@@ -879,7 +879,6 @@ function showView(v, scroll = true) {
   for (const a of document.querySelectorAll('#tabbar a')) {
     if (a.dataset.tab === v) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
   }
-  $('fab').hidden = v !== 'inicio';
   document.title = TITLES[v];
   if (changed && scroll) window.scrollTo(0, 0);
 }
@@ -896,21 +895,9 @@ function setupTabs() {
   showView(viewFromHash(), false);
 }
 
-function watchFab() {
-  const fab = $('fab');
-  if (!('IntersectionObserver' in window)) return;
-  new IntersectionObserver(([e]) => fab.classList.toggle('away', e.isIntersecting), { threshold: 0.15 }).observe($('formpanel'));
-  fab.addEventListener('click', (ev) => {
-    ev.preventDefault();
-    $('formpanel').scrollIntoView({ block: 'start', behavior: reducedMotion() ? 'auto' : 'smooth' });
-    $('p7').focus({ preventScroll: true });
-  });
-}
-
 buildTicker();
 buildForm();
 setupTabs();
-watchFab();
 setupInstall();
 render();
 setupRemote();
