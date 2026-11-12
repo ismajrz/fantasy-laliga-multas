@@ -22,12 +22,12 @@ for (const [name, m] of [['Jornada 13 (ejemplo)', mJ13], ['Jornada 12 (con empat
 const SAFE = /^[\x20-\x7E\n\u00C0-\u00FF\u00BA\u20AC]*$/;
 for (const m of [mJ13, mJ12, mRank]) {
   check(SAFE.test(m), 'sin emojis ni símbolos raros: ' + [...m].filter((c) => !SAFE.test(c)).join(' '));
-  check(!/[*_~—–]/.test(m), 'sin *negrita*, _cursiva_ ni rayas largas');
+  check(!/[_~—–]/.test(m) && (m.match(/\*/g) || []).length % 2 === 0, 'solo *negrita* bien cerrada, sin _cursiva_ ni rayas largas');
   check(!/\u00a0/.test(m), 'sin espacios duros');
 }
-check(mJ13 === ['Fantasy LaLiga - Jornada 13', '7º Jugador9 1,00 €', '8º Jugador8 1,50 €', '9º Jugador5 2,00 €', 'Bote: 58,50 €', 'Líder: Jugador5 15,00 €', PUBLIC_URL].join('\n'), 'mensaje J13 exacto');
-check(mJ12.includes('7º Jugador3 1,25 €') && mJ12.includes('8º Jugador1 1,25 €') && mJ12.includes('Empate 7º-8º: Jugador3 y Jugador1 pagan 1,25 € cada uno'), 'empate J12');
-check(mRank.startsWith('Fantasy LaLiga - Jornada 12 de 38\n1. Jugador5 13,00 €\n') && mRank.includes('\n9. Jugador9 1,00 €\nBote: 54,00 €\nhttps://tu-dominio.example'), 'clasificación');
+check(mJ13 === ['*Fantasy LaLiga - Jornada 13*', '', '*Multas de la jornada*', '7º  Jugador9: 1,00 €', '8º  Jugador8: 1,50 €', '9º  Jugador5: 2,00 €', '', '*Bote total:* 58,50 €', '*Líder de multas:* Jugador5 (15,00 €)', '', PUBLIC_URL].join('\n'), 'mensaje J13 exacto');
+check(mJ12.includes('7º  Jugador3: 1,25 €') && mJ12.includes('8º  Jugador1: 1,25 €') && mJ12.includes('Empate 7º-8º: Jugador3 y Jugador1 pagan 1,25 € cada uno'), 'empate J12');
+check(mRank.startsWith('*Fantasy LaLiga*\nClasificación de multas tras la jornada 12 de 38\n\n1. Jugador5: 13,00 €\n') && mRank.includes('\n9. Jugador9: 1,00 €\n\n*Bote total:* 54,00 €\n\nhttps://tu-dominio.example'), 'clasificación');
 // € y acentos sobreviven a la URL (UTF-8 con encodeURIComponent)
 const enc = waLink('Líder 54,00 €').slice('https://wa.me/?text='.length);
 check(enc === 'L%C3%ADder%2054%2C00%20%E2%82%AC', 'codificación UTF-8 de í y €: ' + enc);
