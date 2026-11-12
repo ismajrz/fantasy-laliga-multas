@@ -2,7 +2,7 @@
 // para que abra sin conexión. NUNCA guarda /api: los datos siempre vienen del servidor y, si no hay
 // conexión, la página enseña su aviso de "Sin conexión".
 // Al cambiar cualquier archivo de la web, sube VERSION para que los móviles descarguen lo nuevo.
-const VERSION = 'v6-4';
+const VERSION = 'v6-5';
 const CACHE = 'fantasy-shell-' + VERSION;
 const SHELL = [
   '/',
@@ -35,7 +35,7 @@ const SHELL = [
 ];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL.map((u) => new Request(u, { cache: 'reload' })))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (e) => {

@@ -5,7 +5,7 @@
 import { NAMES, TOTAL, SLOTS, TIES, fineFor, jornadaCents, isValidJornada, totals } from './league.js';
 import { jornadaMessage, rankingMessage, siteUrl, waLink, GROUP_URL } from './share.js';
 import { records, worstStretch, worstMonth, potSeries, joinNames } from './stats.js';
-import { entryTitle, entryDetail, entryAuth, ago } from './history.js';
+import { entryTitle, entryDetail, entryAuth, ago, baseEntries } from './history.js';
 
 // Equipos de LaLiga 2026/27 (escudos en img/escudos/, ver img/escudos/FUENTES.md)
 const TEAMS = [
@@ -491,7 +491,7 @@ function renderAudit() {
   list.textContent = '';
   const more = $('auditmore');
   if (!state.ready) { list.append(h('li', { class: 'skeleton', 'aria-hidden': 'true' })); more.hidden = true; return; }
-  const all = state.audit;
+  const all = baseEntries(state.jornadas, state.audit);
   if (!all.length) {
     list.append(h('li', { class: 'empty' }, h('strong', { text: 'Sin cambios todavía' }),
       h('span', { text: state.mode === 'remote' || state.mode === 'cache'

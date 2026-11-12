@@ -44,3 +44,11 @@ console.log(`verify-stats: OK · reales: racha de ${rr.slot?.slot} ${rr.slot?.le
 assert.equal(entryTitle({ who: 'Jugador9', action: 'guardar', auth: 'script', n: 1 }), 'J1 importada');
 assert.equal(entryTitle({ who: 'Jugador9', action: 'restaurar', auth: 'script' }), 'Copia de seguridad restaurada');
 console.log('verify-stats: historial sin autor para cargas del servidor OK');
+// Jornadas sin historial: se atribuyen al autor original (y solo si hay uno configurado)
+import { baseEntries } from '../public/js/history.js';
+const js = [{ n: 1, p7: 'A', p8: 'B', p9: 'C', updatedAt: 100 }, { n: 2, p7: 'A', p8: 'B', p9: 'C', updatedAt: 200 }];
+assert.equal(baseEntries(js, []).length, 0, 'sin autor configurado no se inventa historial');
+const be = baseEntries(js, [{ n: 2, who: 'X', action: 'editar', at: 300 }], 'Jugador9');
+assert.deepEqual(be.map((e) => e.n), [2, 1], 'solo la jornada sin entrada se añade, y ordenado');
+assert.equal(entryTitle(be[1]), 'Jugador9 guardó la J1');
+console.log('verify-stats: historial base OK');

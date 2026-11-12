@@ -5,6 +5,18 @@ const eur = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' 
 const tieText = (t) => (t ? t.split('').join('º-') + 'º' : 'sin empate');
 const dateText = (d) => (d ? new Date(d + 'T12:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : 'sin fecha');
 
+// Quién apuntó las jornadas que ya estaban guardadas antes de existir el historial. Vacío = no se inventa nada.
+export const ORIGINAL_AUTHOR = '';
+
+/** Entradas de historial para las jornadas guardadas que no tienen ninguna (se atribuyen a ORIGINAL_AUTHOR). */
+export function baseEntries(jornadas, audit, who = ORIGINAL_AUTHOR) {
+  if (!who) return audit;
+  const seen = new Set(audit.map((e) => e.n));
+  const extra = jornadas.filter((j) => !seen.has(j.n))
+    .map((j) => ({ id: 'base-' + j.n, at: j.updatedAt || 0, who, action: 'guardar', auth: 'nueva', n: j.n, after: j }));
+  return audit.concat(extra).sort((a, b) => b.at - a.at || b.n - a.n);
+}
+
 const VERB = { guardar: 'guardó', editar: 'editó', borrar: 'borró', restaurar: 'restauró una copia' };
 
 /** Título de una entrada: "Jugador6 editó la J12". Lo que carga el servidor (importaciones, copias) no lleva persona. */
