@@ -905,24 +905,43 @@ async function copyText(text) {
   } catch { return false; }
 }
 
-/** Si hay grupo configurado: copia el mensaje, avisa y abre el grupo (WhatsApp no deja rellenar un grupo por enlace). */
+/** Si hay grupo configurado: copia el mensaje y enseña una ventana clara con el botón para abrir el grupo y pegarlo. */
 function setupGroupShare() {
   if (!GROUP_URL) return;
   const PREFIX = 'https://wa.me/?text=';
-  let note;
+  let dlg;
+  const close = () => { dlg.hidden = true; document.body.classList.remove('modal-open'); };
+  function build() {
+    dlg = h('div', { class: 'copy-modal', hidden: '', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'cm-title' },
+      h('div', { class: 'copy-card' },
+        h('p', { class: 'copy-ok', id: 'cm-title' }, h('span', { class: 'copy-tick', 'aria-hidden': 'true', text: '✓' }), h('span', { id: 'cm-head', text: 'Mensaje copiado' })),
+        h('pre', { class: 'copy-preview', id: 'cm-text' }),
+        h('p', { class: 'copy-help', id: 'cm-help' }),
+        h('a', { class: 'primary copy-go', id: 'cm-go', target: '_blank', rel: 'noopener' }, h('span', { text: 'Abrir el grupo' })),
+        h('button', { class: 'copy-cancel', type: 'button', text: 'Cerrar', onclick: close })));
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) close(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !dlg.hidden) close(); });
+    document.body.append(dlg);
+    $('cm-go').addEventListener('click', () => setTimeout(close, 400));
+  }
   document.addEventListener('click', async (ev) => {
     const a = ev.target.closest && ev.target.closest('a[href^="' + PREFIX + '"]');
     if (!a) return;
     ev.preventDefault();
     const text = decodeURIComponent(a.getAttribute('href').slice(PREFIX.length));
     const ok = await copyText(text);
-    if (!note) { note = h('p', { class: 'copied-note', role: 'status' }); document.body.append(note); }
-    note.textContent = ok ? 'Mensaje copiado. Al abrir el grupo, mantén pulsado y pega' : 'No se pudo copiar. Abriendo WhatsApp para elegir chat';
-    note.classList.add('show');
-    setTimeout(() => {
-      note.classList.remove('show');
-      location.href = ok ? GROUP_URL : a.getAttribute('href');
-    }, ok ? 1400 : 600);
+    if (!dlg) build();
+    $('cm-head').textContent = ok ? 'Mensaje copiado' : 'No se pudo copiar el mensaje';
+    $('cm-text').textContent = text;
+    $('cm-help').textContent = ok
+      ? 'Pulsa el botón verde, y en el grupo mantén pulsado en la caja de texto y elige Pegar.'
+      : 'Se abrirá WhatsApp para que elijas el chat con el mensaje ya escrito.';
+    $('cm-go').href = ok ? GROUP_URL : a.getAttribute('href');
+    $('cm-go').firstChild.textContent = ok ? 'Abrir el grupo' : 'Abrir WhatsApp';
+    dlg.classList.toggle('fail', !ok);
+    dlg.hidden = false;
+    document.body.classList.add('modal-open');
+    $('cm-go').focus({ preventScroll: true });
   });
 }
 

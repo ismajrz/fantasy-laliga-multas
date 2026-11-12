@@ -360,10 +360,18 @@ input[type="date"]:disabled { opacity: .6; }
 
 /* ---------- Pie y botón flotante ---------- */
 
-/* Aviso al copiar el mensaje para el grupo */
-.copied-note { position: fixed; left: 50%; bottom: calc(var(--tabbar) + 16px + env(safe-area-inset-bottom)); z-index: 6; margin: 0; padding: 10px 16px; border-radius: var(--r-md); width: max-content; max-width: calc(100vw - 32px); text-align: center;
-  background: var(--ink); color: var(--bg); font-size: var(--fs-sm); font-weight: 600; opacity: 0; transform: translate(-50%, 8px); pointer-events: none; transition: opacity .2s, transform .2s; }
-.copied-note.show { opacity: 1; transform: translate(-50%, 0); }
+/* Ventana "mensaje copiado" para compartir con el grupo */
+.copy-modal { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 16px; background: rgb(0 0 0 / .72); }
+.copy-modal[hidden] { display: none; }
+body.modal-open { overflow: hidden; }
+.copy-card { width: min(100%, 400px); max-height: calc(100dvh - 32px); overflow: auto; display: grid; gap: 12px; padding: 18px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface, var(--bg)); }
+.copy-ok { display: flex; align-items: center; gap: 10px; margin: 0; font: 700 var(--fs-lg)/1.1 var(--font-display); text-transform: uppercase; letter-spacing: .03em; }
+.copy-tick { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #25d366; color: #06210f; font-size: 18px; font-weight: 800; }
+.copy-modal.fail .copy-tick { background: var(--accent); color: #fff; }
+.copy-preview { margin: 0; padding: 10px 12px; max-height: 32dvh; overflow: auto; border-radius: var(--r-md); background: var(--bg); color: var(--muted); font: inherit; font-size: var(--fs-sm); line-height: 1.4; white-space: pre-wrap; word-break: break-word; }
+.copy-help { margin: 0; font-size: var(--fs-sm); line-height: 1.4; }
+.copy-go { background: #25d366; color: #06210f; }
+.copy-cancel { min-height: 40px; border: 0; background: none; color: var(--muted); font: inherit; font-size: var(--fs-sm); }
 
 /* ---------- Movimiento ---------- */
 @media (prefers-reduced-motion: no-preference) {
