@@ -4,6 +4,10 @@
 
 import { NAMES, TOTAL, SLOTS, TIES, fineFor, totals } from './league.js';
 
+// Enlace de invitación de tu grupo de WhatsApp (https://chat.whatsapp.com/...). Si está vacío, el botón abre
+// WhatsApp para elegir chat como siempre. Si lo rellenas, el botón copia el mensaje y abre el grupo directo.
+export const GROUP_URL = '';
+
 export const PUBLIC_URL = 'https://tu-dominio.example';
 
 const eur = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' });

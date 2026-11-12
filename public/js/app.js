@@ -3,7 +3,7 @@
 // se usa el almacenamiento del navegador (localStorage) como respaldo.
 
 import { NAMES, TOTAL, SLOTS, TIES, fineFor, jornadaCents, isValidJornada, totals } from './league.js';
-import { jornadaMessage, rankingMessage, siteUrl, waLink } from './share.js';
+import { jornadaMessage, rankingMessage, siteUrl, waLink, GROUP_URL } from './share.js';
 import { records, worstStretch, worstMonth, potSeries, joinNames } from './stats.js';
 import { entryTitle, entryDetail, entryAuth, ago } from './history.js';
 
@@ -895,9 +895,33 @@ function setupTabs() {
   showView(viewFromHash(), false);
 }
 
+/** Si hay grupo configurado: copia el mensaje y abre el grupo directamente (WhatsApp no deja rellenar un grupo por enlace). */
+function setupGroupShare() {
+  if (!GROUP_URL) return;
+  const PREFIX = 'https://wa.me/?text=';
+  let note;
+  document.addEventListener('click', (ev) => {
+    const a = ev.target.closest && ev.target.closest('a[href^="' + PREFIX + '"]');
+    if (!a) return;
+    ev.preventDefault();
+    const text = decodeURIComponent(a.getAttribute('href').slice(PREFIX.length));
+    let copied = Promise.resolve(false);
+    try { copied = navigator.clipboard.writeText(text).then(() => true, () => false); } catch { /* sin portapapeles */ }
+    window.open(GROUP_URL, '_blank', 'noopener');
+    if (!note) { note = h('p', { class: 'copied-note', role: 'status' }); document.body.append(note); }
+    copied.then((ok) => {
+      note.textContent = ok ? 'Mensaje copiado: pégalo en el grupo' : 'No se pudo copiar el mensaje';
+      note.classList.add('show');
+      clearTimeout(note._t);
+      note._t = setTimeout(() => note.classList.remove('show'), 4000);
+    });
+  });
+}
+
 buildTicker();
 buildForm();
 setupTabs();
 setupInstall();
+setupGroupShare();
 render();
 setupRemote();
