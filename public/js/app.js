@@ -895,26 +895,34 @@ function setupTabs() {
   showView(viewFromHash(), false);
 }
 
-/** Si hay grupo configurado: copia el mensaje y abre el grupo directamente (WhatsApp no deja rellenar un grupo por enlace). */
+/** Copia texto al portapapeles (con plan B para móviles que no dejan usar la API moderna). */
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; } catch { /* plan B */ }
+  try {
+    const ta = h('textarea', { readonly: '', style: 'position:fixed;top:0;left:0;opacity:0' });
+    ta.value = text; document.body.append(ta); ta.focus(); ta.select(); ta.setSelectionRange(0, text.length);
+    const ok = document.execCommand('copy'); ta.remove(); return ok;
+  } catch { return false; }
+}
+
+/** Si hay grupo configurado: copia el mensaje, avisa y abre el grupo (WhatsApp no deja rellenar un grupo por enlace). */
 function setupGroupShare() {
   if (!GROUP_URL) return;
   const PREFIX = 'https://wa.me/?text=';
   let note;
-  document.addEventListener('click', (ev) => {
+  document.addEventListener('click', async (ev) => {
     const a = ev.target.closest && ev.target.closest('a[href^="' + PREFIX + '"]');
     if (!a) return;
     ev.preventDefault();
     const text = decodeURIComponent(a.getAttribute('href').slice(PREFIX.length));
-    let copied = Promise.resolve(false);
-    try { copied = navigator.clipboard.writeText(text).then(() => true, () => false); } catch { /* sin portapapeles */ }
-    window.open(GROUP_URL, '_blank', 'noopener');
+    const ok = await copyText(text);
     if (!note) { note = h('p', { class: 'copied-note', role: 'status' }); document.body.append(note); }
-    copied.then((ok) => {
-      note.textContent = ok ? 'Mensaje copiado: pégalo en el grupo' : 'No se pudo copiar el mensaje';
-      note.classList.add('show');
-      clearTimeout(note._t);
-      note._t = setTimeout(() => note.classList.remove('show'), 4000);
-    });
+    note.textContent = ok ? 'Mensaje copiado. Al abrir el grupo, mantén pulsado y pega' : 'No se pudo copiar. Abriendo WhatsApp para elegir chat';
+    note.classList.add('show');
+    setTimeout(() => {
+      note.classList.remove('show');
+      location.href = ok ? GROUP_URL : a.getAttribute('href');
+    }, ok ? 1400 : 600);
   });
 }
 

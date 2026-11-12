@@ -2,7 +2,7 @@
 // para que abra sin conexión. NUNCA guarda /api: los datos siempre vienen del servidor y, si no hay
 // conexión, la página enseña su aviso de "Sin conexión".
 // Al cambiar cualquier archivo de la web, sube VERSION para que los móviles descarguen lo nuevo.
-const VERSION = 'v6-5';
+const VERSION = 'v6-6';
 const CACHE = 'fantasy-shell-' + VERSION;
 const SHELL = [
   '/',
