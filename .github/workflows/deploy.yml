@@ -1,0 +1,60 @@
+# Publica la rama main en Cloudflare Pages (proyecto fantasy-laliga) en cada push.
+# Necesita dos secretos del repositorio: CLOUDFLARE_API_TOKEN y CLOUDFLARE_ACCOUNT_ID (ver README).
+# Si faltan, las pruebas se ejecutan igual pero no se publica nada.
+name: Publicar en Cloudflare
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: cloudflare-produccion
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+      - name: ¿Están los secretos?
+        id: secretos
+        env:
+          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$TOKEN" ] && [ -n "$ACCOUNT" ]; then echo "ok=true" >> "$GITHUB_OUTPUT"
+          else echo "::warning::Faltan CLOUDFLARE_API_TOKEN o CLOUDFLARE_ACCOUNT_ID: no se publica."; fi
+
+      # Igual que la publicación actual: toda la web dentro de un _worker.js (scripts/build-embedded-worker.mjs)
+      - name: Preparar la web
+        if: steps.secretos.outputs.ok == 'true'
+        run: node scripts/build-embedded-worker.mjs dist/_worker.js
+
+      - name: Publicar en Cloudflare Pages
+        if: steps.secretos.outputs.ok == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name fantasy-laliga --branch main --commit-dirty=true
+
+      # Worker con cron de las copias semanales (miércoles) (workers/backup). El token necesita también "Workers Scripts: Edit".
+      - name: Publicar el Worker de copias semanales
+        if: steps.secretos.outputs.ok == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: workers/backup
+          command: deploy

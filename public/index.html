@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A0A0A">
+<meta name="description" content="Multas de la liga Fantasy LaLiga: el 7º, 8º y 9º de cada jornada pagan.">
+<title>Fantasy LaLiga</title>
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="img/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Fantasy">
+<link rel="preload" href="fonts/barlow-condensed-800.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/barlow-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/styles.css">
+<script type="module" src="js/app.js"></script>
+</head>
+<body>
+<a class="skip" href="#form">Saltar al formulario</a>
+<main class="app">
+  <nav class="ticker" id="ticker" aria-label="Equipos de LaLiga 2026/27"></nav>
+
+  <header class="top">
+    <img class="badge" src="img/laliga.png" alt="LaLiga" width="40" height="40">
+    <div class="brand">
+      <p class="brand-name">Fantasy LaLiga</p>
+      <p class="brand-season">Temporada 26/27</p>
+    </div>
+    <p class="sync" id="sync" data-state="loading"><span class="sync-dot" aria-hidden="true"></span><span id="synctext">Conectando…</span></p>
+  </header>
+
+  <p class="offline" id="offline" role="alert" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 20h20L12 3zM12 10v4M12 17.5v.01"/></svg>
+    <span><b>Sin conexión:</b> <span id="offlinetext"></span></span>
+  </p>
+
+  <div class="view" id="view-inicio" data-view="inicio">
+    <section class="card pot" aria-labelledby="kicker">
+      <p class="kicker" id="kicker">Multas acumuladas</p>
+      <p class="total num" id="total" aria-live="polite">0,00&nbsp;€</p>
+      <div class="progress">
+        <div class="progress-head">
+          <p class="meta num" id="meta">Cargando jornadas…</p>
+          <span class="seasonpct num" id="seasonpct" aria-hidden="true">0%</span>
+        </div>
+        <div class="season" id="season" role="progressbar" aria-label="Temporada" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <i id="seasonfill"></i>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="ranktitle">
+      <div class="sechead">
+        <h2 id="ranktitle">Quién debe más</h2>
+        <a class="wa-chip" id="sharerank" target="_blank" rel="noopener" hidden aria-label="Compartir clasificación por WhatsApp"><svg class="ico-fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg><span>Compartir</span></a>
+        <small id="rankhint"></small>
+      </div>
+      <ol class="rank card" id="rank"></ol>
+    </section>
+
+
+    <section class="card formcard" id="formpanel" aria-labelledby="newtitle">
+      <h2 id="newtitle">Apuntar jornada</h2>
+      <form id="form" novalidate>
+        <div class="jpick">
+          <button class="step" id="jprev" type="button" aria-label="Jornada anterior">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <label for="jn" class="sr">Jornada</label>
+          <select id="jn" name="jn" disabled></select>
+          <button class="step" id="jnext" type="button" aria-label="Jornada siguiente">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+        <p class="hint saved" id="jhint" hidden></p>
+        <p class="hint grace" id="gracehint" hidden></p>
+
+        <div class="slots">
+          <div class="slot p7">
+            <label for="p7" class="pos-badge"><b>7º</b><span>1,00&nbsp;€</span></label>
+            <select id="p7" name="p7" disabled></select>
+          </div>
+          <div class="slot p8">
+            <label for="p8" class="pos-badge"><b>8º</b><span>1,50&nbsp;€</span></label>
+            <select id="p8" name="p8" disabled></select>
+          </div>
+          <div class="slot p9">
+            <label for="p9" class="pos-badge"><b>9º</b><span>2,00&nbsp;€</span></label>
+            <select id="p9" name="p9" disabled></select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="jdate" class="flabel">Fecha de la jornada <span>(opcional)</span></label>
+          <input type="date" id="jdate" name="jdate" disabled>
+        </div>
+
+        <fieldset class="ties" id="ties" disabled>
+          <legend>¿Hubo empate?</legend>
+          <div class="seg">
+            <label><input type="radio" name="tie" value="" checked><span>No</span></label>
+            <label><input type="radio" name="tie" value="78"><span>7º‑8º</span></label>
+            <label><input type="radio" name="tie" value="89"><span>8º‑9º</span></label>
+            <label><input type="radio" name="tie" value="789"><span>Los tres</span></label>
+          </div>
+          <p class="hint">Pon a los empatados en esos puestos en cualquier orden: se reparten la multa a partes iguales.</p>
+        </fieldset>
+
+        <p class="whoami" id="whoami" hidden></p>
+        <button class="primary" id="save" type="submit" disabled><span id="savelabel">Guardar jornada</span></button>
+        <p class="msg" id="msg" role="status" aria-live="polite"></p>
+        <a class="wa" id="wabtn" target="_blank" rel="noopener" hidden><svg class="ico-fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg><span>Avisar al grupo</span></a>
+      </form>
+    </section>
+
+    <section aria-labelledby="listtitle">
+      <div class="sechead">
+        <h2 id="listtitle">Jornadas guardadas</h2>
+        <button class="filterchip" id="filterchip" type="button" hidden></button>
+      </div>
+      <ul class="list card" id="list"></ul>
+      <button class="morebtn" id="listmore" type="button" hidden></button>
+    </section>
+
+
+
+    <section class="install" id="install" aria-labelledby="installtitle" hidden>
+      <img src="img/icons/icon-192.png" alt="" width="36" height="36">
+      <div class="install-body">
+        <p class="install-title" id="installtitle">Instálala como app</p>
+        <p class="hint" id="installtext">Añádela a la pantalla de inicio y se abre como una app.</p>
+      </div>
+      <button class="install-btn" id="installbtn" type="button" hidden>Instalar</button>
+      <button class="tool" id="installx" type="button" aria-label="No mostrar más" title="No mostrar más"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </section>
+    <p class="foot" id="foot" hidden><button type="button" class="linkbtn" id="installlink">Instalar la app en el móvil</button></p>
+  </div>
+
+  <div class="view" id="view-estadisticas" data-view="estadisticas" hidden>
+    <section aria-labelledby="statstitle">
+      <div class="sechead">
+        <h2 id="statstitle">Estadísticas</h2>
+        <small id="statshint">Rachas y récords de la temporada</small>
+      </div>
+      <div class="stats" id="stats"></div>
+    </section>
+  </div>
+
+  <div class="view" id="view-historial" data-view="historial" hidden>
+    <section aria-labelledby="audittitle">
+      <div class="sechead">
+        <h2 id="audittitle">Historial</h2>
+        <small>Quién apuntó, corrigió o borró cada jornada. <span id="auditcount"></span></small>
+      </div>
+      <ul class="audit card" id="audit"></ul>
+      <button class="morebtn" id="auditmore" type="button" hidden></button>
+    </section>
+  </div>
+</main>
+
+<dialog class="sheet" id="whodlg" aria-labelledby="whotitle">
+  <form method="dialog" class="sheet-body">
+    <p class="kicker">Antes de guardar</p>
+    <h2 id="whotitle">¿Quién eres?</h2>
+    <p class="hint">Así queda en el historial quién apuntó cada cosa. Se recuerda en este móvil y puedes cambiarlo cuando quieras.</p>
+    <div class="whogrid" id="whogrid"></div>
+    <button class="ghost" value="cancel" type="submit">Cancelar</button>
+  </form>
+</dialog>
+
+<dialog class="sheet" id="pindlg" aria-labelledby="pintitle">
+  <form class="sheet-body" id="pinform" novalidate>
+    <p class="kicker" id="pinkicker">Hace falta el PIN</p>
+    <h2 id="pintitle">PIN de administrador</h2>
+    <p class="hint" id="pintext">Para cambiar o borrar una jornada ya guardada hace falta el PIN.</p>
+    <label for="pin" class="sr">PIN</label>
+    <input class="pin" id="pin" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" required>
+    <p class="msg error" id="pinmsg" role="alert"></p>
+    <div class="sheet-actions">
+      <button class="ghost" id="pincancel" type="button">Cancelar</button>
+      <button class="primary" id="pinok" type="submit"><span>Confirmar</span></button>
+    </div>
+  </form>
+</dialog>
+
+<nav class="tabbar" id="tabbar" aria-label="Secciones">
+  <a href="#inicio" data-tab="inicio" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></svg><span>Inicio</span></a>
+  <a href="#estadisticas" data-tab="estadisticas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-7"/></svg><span>Estadísticas</span></a>
+  <a href="#historial" data-tab="historial"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v5l3 2M3.5 12a8.5 8.5 0 102.5-6M3 4v4h4"/></svg><span>Historial</span></a>
+</nav>
+<a class="fab" id="fab" href="#apuntar" aria-label="Apuntar jornada">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Jornada</span>
+</a>
+</body>
+</html>

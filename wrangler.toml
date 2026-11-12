@@ -1,0 +1,9 @@
+# Configuración de Cloudflare Pages (ver README.md)
+name = "fantasy-laliga"
+pages_build_output_dir = "public"
+compatibility_date = "2026-11-01"
+
+[[kv_namespaces]]
+binding = "JORNADAS"
+# Sustituye por el id que te da: npx wrangler kv namespace create JORNADAS
+id = "REEMPLAZA_CON_EL_ID_DE_TU_KV"

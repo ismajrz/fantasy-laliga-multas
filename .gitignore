@@ -1,0 +1,15 @@
+# Dependencias y estado local de wrangler
+node_modules/
+.wrangler/
+dist/
+
+# Secretos locales (el PIN va como hash en .dev.vars; NUNCA se sube)
+.dev.vars
+.dev.vars.*
+.env
+.env.*
+
+# Generados
+data/kv-import.json
+*.log
+.DS_Store

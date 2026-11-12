@@ -1,0 +1,28 @@
+{
+  "name": "fantasy-laliga",
+  "version": "6.0.0",
+  "description": "Web instalable (PWA) para llevar las multas por jornada de una liga Fantasy entre amigos. Cloudflare Pages + KV.",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "wrangler pages dev public",
+    "deploy": "wrangler pages deploy public --project-name fantasy-laliga",
+    "import": "node scripts/import.mjs",
+    "import:local": "node scripts/import.mjs --local",
+    "test": "node scripts/verify-totals.mjs && node scripts/verify-share.mjs && node scripts/verify-core.mjs && node scripts/verify-stats.mjs",
+    "test:api": "node scripts/verify-api.mjs",
+    "restore": "node scripts/restore.mjs",
+    "deploy:backup": "cd workers/backup && wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.160.1",
+    "esbuild": "^0.28.2"
+  },
+  "allowScripts": {
+    "workerd@1.20261110.1": true,
+    "esbuild@0.28.2": true
+  }
+}
